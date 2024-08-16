@@ -1,34 +1,30 @@
 import { useState } from 'react'
 import './App.css'
 import Dashboard from '../pages/Dashboard'
-
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
+import Calendar from '../components/Calendar';
 
 function App() {
 
-  
-  const [count, setCount] = useState(0)
-/*
-
-    const [state, setState] = useState(initialState);
-
-    Hier ist eine Erklärung der Teile:
-      •	state (Hier count): Der aktuelle Zustand der Komponente.
-      •	setState (Hier setCount): Eine Funktion, die verwendet wird, um den Zustand zu aktualisieren.
-      •	initialState (Hier 0): Der Anfangswert des Zustands.
-
-  */
   return (
     <>
-      
-      <Dashboard/>
-      
-      <div className="card">
 
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+      <Dashboard />
 
-        </div>
+      <p>Google Auth</p>
+      <div className="login" style={{ colorScheme: 'light' }}>
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            const decoded = jwtDecode(credentialResponse?.credential);
+            console.log(decoded);
+          }}
+          onError={() => {
+            console.log('Login Failed');
+          }}
+        />
+      </div>
+      <Calendar/>
     </>
   )
 }
