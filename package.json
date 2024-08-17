@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@picocss/pico": "^2.0.6",
     "@react-oauth/google": "^0.12.1",
     "cssnano": "^7.0.5",

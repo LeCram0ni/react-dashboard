@@ -1,32 +1,47 @@
-import { useState } from 'react'
-import './App.css'
-import Dashboard from '../pages/Dashboard'
-import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from "jwt-decode";
-import Calendar from '../components/Calendar';
+import { useState, useEffect } from 'react';
+import './App.css';
+import Dashboard from '../pages/Dashboard';
+import TodoInput from "../components/TodoInput";
+import TodoList from "../components/TodoList";
 
 function App() {
+  const [todos, setTodos] = useState(() => {
+    const savedTodos = localStorage.getItem('todos');
+    return savedTodos ? JSON.parse(savedTodos) : [
+      "Laura antworten",
+      "Steckdose Fernseher",
+      "Spülmaschine"
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+
+  function handleAddTodos(newTodo) {
+    if (newTodo.trim() === '') return; // Prevent adding empty todos
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
+  }
+
+  function handleDeleteTodo(indexToDelete) {
+    setTodos((prevTodos) => prevTodos.filter((_, index) => index !== indexToDelete));
+  }
+
+  function handleEditTodo(indexToEdit, newValue) {
+    setTodos((prevTodos) => {
+      const updatedTodos = [...prevTodos];
+      updatedTodos[indexToEdit] = newValue;
+      return updatedTodos;
+    });
+  }
 
   return (
     <>
-
       <Dashboard />
-
-      <p>Google Auth</p>
-      <div className="login" style={{ colorScheme: 'light' }}>
-        <GoogleLogin
-          onSuccess={(credentialResponse) => {
-            const decoded = jwtDecode(credentialResponse?.credential);
-            console.log(decoded);
-          }}
-          onError={() => {
-            console.log('Login Failed');
-          }}
-        />
-      </div>
-      <Calendar/>
+      <TodoInput handleAddTodos={handleAddTodos} />
+      <TodoList todos={todos} onDeleteTodo={handleDeleteTodo} onEditTodo={handleEditTodo} />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
